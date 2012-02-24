@@ -14,7 +14,6 @@
 #include <sys/queue.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include <signal.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,14 +26,13 @@
 int called = 0;
 int pos = 1;
 
-static void
-signal_cb(int fd, short event, void *arg)
+static void signal_cb(int fd, short event, void *arg)
 {
     struct event *signal = arg;
     struct timeval tv;
 
-    unsigned int t = time(NULL);
-    printf("%s: got signal %d\n", __func__, t);
+    time_t t = time(NULL);
+    printf("%s[%s]: timer0 %u\n",__FILE__, __func__, (unsigned int)t);
 
     
     if(pos < called) {
@@ -45,8 +43,7 @@ signal_cb(int fd, short event, void *arg)
     }
 }
 
-int
-main (int argc, char **argv)
+int main (int argc, char **argv)
 {
     struct event signal_int;
     struct timeval tv;
