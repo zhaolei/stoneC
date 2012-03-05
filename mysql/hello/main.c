@@ -21,6 +21,9 @@ int main(void)
 //   mysql_options(mysql, MYSQL_READ_DEFAULT_GROUP, "libmysqld_client");
 //   mysql_options(mysql, MYSQL_OPT_USE_EMBEDDED_CONNECTION, NULL);
  
+   unsigned int num = 0;
+   int i = 0;
+   MYSQL_FIELD *field;
    mysqlr = mysql_real_connect(mysql, "127.0.0.1","root","111111", "stone", 3306,NULL,0);
    if(mysqlr == NULL) {
         printf("error\r\n");
@@ -32,8 +35,18 @@ int main(void)
  
    results = mysql_store_result(mysql);
  
+   num = mysql_num_fields(results);
+   for(i=0;i<num;i++) {
+        field = mysql_fetch_field_direct(results, i);
+        printf("%s  |", field->name);
+   }
+   printf("\r\n");
    while((record = mysql_fetch_row(results))) {
-      printf("%s - %s - %s \n", record[0], record[1], record[2]);
+        
+      for(i=0;i<num;i++) {
+        printf("%s |", record[i]);
+      }
+      printf("\r\n----------------------\r\n");
    }
  
    mysql_free_result(results);
