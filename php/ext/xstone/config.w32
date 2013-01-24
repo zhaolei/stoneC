@@ -1,0 +1,13 @@
+// $Id$
+// vim:ft=javascript
+
+// If your extension references something external, use ARG_WITH
+// ARG_WITH("xstone", "for xstone support", "no");
+
+// Otherwise, use ARG_ENABLE
+// ARG_ENABLE("xstone", "enable xstone support", "no");
+
+if (PHP_XSTONE != "no") {
+	EXTENSION("xstone", "xstone.c");
+}
+
