@@ -7,11 +7,13 @@ ifeq ($(KERNELRELEASE),)
     # Assume the source tree is where the running kernel was built  
     # You should set KERNELDIR in the environment if it's elsewhere  
 #    KERNELDIR ?= /lib/modules/$(shell uname -r)/build  
-    KERNELDIR = /stone/github/stonec/dr01 
+#KERNELDIR = /stone/github/stonec/dr01 
+    KERNELDIR ?= /stone/c/tar/linux-3.0.1/ 
+    PWD := $(shell pwd)
 #   KERNELDIR=$(KDIR)  
 #    
     # The current directory is passed to sub-makes as argument  
-    PWD := $(shell pwd)  
+    #PWD := $(shell pwd)  
 modules:  
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules  
 #modules_install:  

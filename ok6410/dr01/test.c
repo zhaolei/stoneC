@@ -15,14 +15,20 @@ linux headers
 #include <linux/fcntl.h>  
 #include <asm/segment.h>  
 #include <asm/io.h>  
-#include <asm/arch/regs-gpio.h>  
-#include "ioctl_c.h"  
+//#include <asm/arch/regs-gpio.h>  
+//#include <mach/gpio.h> 
+#include <mach/map.h> 
+#include <mach/regs-gpio.h> 
+#include <mach/gpio-bank-g.h> 
+//#include <mach/gpio-bank-k.h> 
+#include "ioctl.h"  
 //设备主次设备号  
 unsigned int test_major=253;  
 unsigned int test_minor=0;  
 struct cdev cdevc;  
 MODULE_LICENSE("Dual BSD/GPL");  
 GPIO_Data_S led;  
+
 static void led_ctl()  
 {  
     //G50 时写寄存器，具体参见s3c2440 datasheet  
@@ -30,15 +36,15 @@ static void led_ctl()
     if(led.port=='G'&& led.bit==5 && led.value==0)  
     {  
         printk("G50/n");  
-        __raw_writel(0x400,S3C2410_GPGCON);  
-                __raw_writel(0xffdf,S3C2410_GPGDAT);  
+        __raw_writel(0x400,S3C64XX_GPGCON);  
+                __raw_writel(0xffdf,S3C64XX_GPGDAT);  
     }  
     //G60 时写寄存器  
     else if(led.port=='G' && led.bit==6 && led.value==0)  
     {  
         printk("G60/n");      
-        __raw_writel(0x1000,S3C2410_GPGCON);  
-                __raw_writel(0xffbf,S3C2410_GPGDAT);  
+        __raw_writel(0x1000,S3C64XX_GPGCON);  
+                __raw_writel(0xffbf,S3C64XX_GPGDAT);  
     }  
 }  
 static int read_test(struct file *file,char *buf,int count ,loff_t *f_pos)  
@@ -62,8 +68,8 @@ static int ioctl_test(struct inode *inode, struct file *filp, unsigned int cmd, 
     printk("/n ioctl_test");  
     switch(cmd)  
     {  
-        case GPIO_IO_SET_GPG :led_ctl();break;  
-        case GPIO_IO_GET_GPG :led_ctl();break;  
+        //case GPIO_IO_SET_GPG :led_ctl();break;  
+        //case GPIO_IO_GET_GPG :led_ctl();break;  
     //  case GPIO_IO_WRITE :printk("cmd3") ;break;  
     //  case GPIO_IO_READ :printk("cmd3") ;break;  
         default:break;  
@@ -84,7 +90,7 @@ struct file_operations test_fops = {
     .read=read_test,  
     .write=write_test,  
     .open=open_test,  
-    .ioctl=ioctl_test,  
+    //.ioctl=ioctl_test,  
     .release=release_test,  
 };  
 int simple_c_init_module(void)  
