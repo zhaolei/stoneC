@@ -1,1 +1,0 @@
-cmd_/stone/github/stonec/dr_01/t1.ko := ld -r -m elf_i386 -T /usr/src/linux-headers-3.2.0-29-generic-pae/scripts/module-common.lds --build-id  -o /stone/github/stonec/dr_01/t1.ko /stone/github/stonec/dr_01/t1.o /stone/github/stonec/dr_01/t1.mod.o

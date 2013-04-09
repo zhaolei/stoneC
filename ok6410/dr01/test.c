@@ -20,7 +20,6 @@ linux headers
 #include <mach/map.h> 
 #include <mach/regs-gpio.h> 
 #include <mach/gpio-bank-g.h> 
-//#include <mach/gpio-bank-k.h> 
 #include "ioctl.h"  
 //设备主次设备号  
 unsigned int test_major=253;  
