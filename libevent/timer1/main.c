@@ -61,8 +61,8 @@ int main (int argc, char **argv)
    // event_set(&signal_int, SIGINT, EV_SIGNAL|EV_PERSIST, signal_cb, &signal_int);
 
     evtimer_set(&signal_int, signal_cb, &signal_int);
-     evutil_timerclear(&tv);
-     tv.tv_sec = 2;
+    evutil_timerclear(&tv);
+    tv.tv_sec = 2;
     //设置事件
     //事件类型包括EV_READ、EV_WRITE、EV_PERSIST等
     //另外有一个设置时间的函数evtimer_set(...);

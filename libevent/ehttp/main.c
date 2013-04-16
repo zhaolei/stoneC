@@ -17,12 +17,15 @@
 void now_handler(struct evhttp_request *req, void *arg)
 {
         struct evbuffer *buf;
+        char ebuf[100];
         buf = evbuffer_new();
 
         if (buf == NULL)
         err(1, "failed to create response buffer");
 
-        evbuffer_add_printf(buf, "<h1>Hello World!</h1>");
+        sprintf(ebuf, "log: %s %s %s \n", req->remote_host, req->host_cache, req->uri);
+        //evbuffer_add_printf(buf, "<h1>Hello World!</h1>");
+        evbuffer_add_printf(buf, ebuf);
         evhttp_send_reply(req, HTTP_OK, "OK", buf);
         printf("log: %s %s %s \n", req->remote_host, req->host_cache, req->uri);
 }
