@@ -15,8 +15,12 @@ int main()
     int status;
     pid_t pid;
     pid_t wpid;
+    int len = 0;
 
     while(fgets(buf, MAX, stdin)>0) {
+        len = strlen(buf);
+        buf[len-1]='\0';
+        
         pid = fork();
         if(pid == 0) {
             execlp(buf, buf, (char *)0);
