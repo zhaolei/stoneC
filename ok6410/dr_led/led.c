@@ -21,9 +21,7 @@
   
 int led_open(struct inode *inode, struct file *filp)  
 {  
-  
 	unsigned int tmp;  
-  
 	tmp = readl(S3C64XX_GPMCON);  
 	tmp = (tmp & ~(0xffff) | (0x1111)); //set the GPIO output mode  
 	writel(tmp, S3C64XX_GPMCON);  
@@ -35,193 +33,106 @@ int led_open(struct inode *inode, struct file *filp)
   
 ssize_t led_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)  
 {  
-  
 	printk("$$$$$$$$$$led_read$$$$$$$$$\n");  
-  
 	return count;  
 }  
   
 ssize_t led_write(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)  
 {  
+    char mbuf[10];  
   
-char mbuf[10];  
+    unsigned int tmp;  
   
-unsigned int tmp;  
+    copy_from_user(mbuf,buf,count);  
   
-copy_from_user(mbuf,buf,count);  
+    switch(mbuf[0])  
+    {  
   
+        case 0:  
   
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp |= (0x1);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 1:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp &= ~(0x1);   
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 2:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp |= (0x2);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 3:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp &= ~(0x2);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 4:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp |= (0x4);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 5:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp &= ~(0x4);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
+        case 6:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp |= (0x8);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
   
-switch(mbuf[0])  
+        case 7:  
+            tmp = readl(S3C64XX_GPMDAT);  
+            tmp &= ~(0x8);  
+            writel(tmp, S3C64XX_GPMDAT);  
+            break;  
   
-{  
-  
-case 0:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp |= (0x1);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 1:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp &= ~(0x1);   
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 2:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp |= (0x2);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 3:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp &= ~(0x2);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 4:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp |= (0x4);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 5:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp &= ~(0x4);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 6:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp |= (0x8);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-case 7:  
-  
-tmp = readl(S3C64XX_GPMDAT);  
-  
-tmp &= ~(0x8);  
-  
-writel(tmp, S3C64XX_GPMDAT);  
-  
-break;  
-  
-default:  
-  
-break;  
-  
+        default:  
+            break;  
+    }  
+    printk("$$$$$$$$$$led_write$$$$$$$$$\n");  
+    return count;  
 }  
-  
-  
-  
-printk("$$$$$$$$$$led_write$$$$$$$$$\n");  
-  
-return count;  
-  
-}  
-  
-   
   
 int led_release(struct inode *inode, struct file *filp)  
-  
 {  
-  
-printk("$$$$$$$$$$led_release$$$$$$$$$\n");  
-  
-return 0;  
-  
+    printk("$$$$$$$$$$led_release$$$$$$$$$\n");  
+    return 0;  
 }  
-  
-   
   
 struct file_operations my_fops = {  
-  
-.owner = THIS_MODULE,  
-  
-.open = led_open,  
-  
-.read = led_read,  
-  
-.write = led_write,  
-  
-.release = led_release,  
-  
+    .owner = THIS_MODULE,  
+    .open = led_open,  
+    .read = led_read,  
+    .write = led_write,  
+    .release = led_release,  
 };  
   
-   
-  
 static int led_init(void)  
-  
 {  
+    int rc;  
+    printk("Test led dev\n");  
+    rc = register_chrdev(LED_MAJOR, "led", &my_fops);  
+    if(rc < 0)  
+    {  
+        printk("register %s mychar dev error\n", "led");  
+        return -1;  
+    }  
   
-int rc;  
-  
-printk("Test led dev\n");  
-  
-rc = register_chrdev(LED_MAJOR, "led", &my_fops);  
-  
-if(rc < 0)  
-  
-{  
-  
-printk("register %s mychar dev error\n", "led");  
-  
-return -1;  
-  
+    printk("$$$$$$$$$ register led dev OK\n");  
+    return 0;  
 }  
-  
-printk("$$$$$$$$$ register led dev OK\n");  
-  
-return 0;  
-  
-}  
-  
-   
   
 static void led_exit(void)  
-  
 {  
-  
-unregister_chrdev(LED_MAJOR, "led");  
-  
-printk("Good Bye!\n");  
-  
+    unregister_chrdev(LED_MAJOR, "led");  
+    printk("Good Bye!\n");  
 }  
   
-   
-  
 MODULE_LICENSE("GPL");  
-  
 module_init(led_init);  
-  
 module_exit(led_exit);  
