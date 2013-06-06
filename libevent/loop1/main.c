@@ -1,3 +1,11 @@
+#include <event.h>
+#include <sys/types.h>
+#include <time.h>
+
+time_t now;
+struct tm t;
+char buf[20];
+
 void get_time(int fd,short event,struct event *arg)  /*获取系统时间并将其往回write*/
 {
      localtime_r(&now,&t);
