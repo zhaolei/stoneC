@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "mysql.h"
  
 MYSQL *mysql;
@@ -23,33 +25,38 @@ int main(void)
  
    unsigned int num = 0;
    int i = 0;
+   char *sql;
    MYSQL_FIELD *field;
-   mysqlr = mysql_real_connect(mysql, "127.0.0.1","root","111111", "stone", 3306,NULL,0);
+   mysqlr = mysql_real_connect(mysql, "127.0.0.1","root","1", "test", 3306,NULL,0);
    if(mysqlr == NULL) {
         printf("error\r\n");
         printf("mysql_real_connect failed: %s\r\n", mysql_error(mysql));
         exit(1);
    }
  
-   mysql_query(mysql, "select * from fixtable limit 10");
+   while(sql = readline(">>")) {
+    //mysql_query(mysql, "select * from fixtable limit 10");
+        mysql_query(mysql, sql);
+        free(sql);
+        results = mysql_store_result(mysql);
  
-   results = mysql_store_result(mysql);
- 
-   num = mysql_num_fields(results);
-   for(i=0;i<num;i++) {
-        field = mysql_fetch_field_direct(results, i);
-        printf("%s  |", field->name);
-   }
-   printf("\r\n");
-   while((record = mysql_fetch_row(results))) {
+        num = mysql_num_fields(results);
+        for(i=0;i<num;i++) {
+            field = mysql_fetch_field_direct(results, i);
+            printf("%s  |", field->name);
+        }
+        printf("\r\n");
+        while((record = mysql_fetch_row(results))) {
+            for(i=0;i<num;i++) {
+                printf("%s |", record[i]);
+            }
+            printf("\r\n----------------------\r\n");
+        }
         
-      for(i=0;i<num;i++) {
-        printf("%s |", record[i]);
-      }
-      printf("\r\n----------------------\r\n");
+        mysql_free_result(results);
    }
  
-   mysql_free_result(results);
+ 
    mysql_close(mysql);
    mysql_server_end();
  

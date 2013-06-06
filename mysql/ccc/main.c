@@ -18,7 +18,7 @@ int main(void)
    int i = 0;
    MYSQL_FIELD *field;
    char sql[100] = "select * from fixtable limit 10";
-   mysqlr = mysql_real_connect(mysql, "127.0.0.1","root","111111", "stone", 3306,NULL,0);
+   mysqlr = mysql_real_connect(mysql, "127.0.0.1","root","1", "test", 3306,NULL,0);
    if(mysqlr == NULL) {
         printf("error\r\n");
         printf("mysql_real_connect failed: %s\r\n", mysql_error(mysql));
