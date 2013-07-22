@@ -46,6 +46,7 @@ PHP_FUNCTION(confirm_xstone_compiled);	/* For testing, remove later. */
 PHP_FUNCTION(xstone_fun);	/* Zhao lei Test. */
 PHP_FUNCTION(xstone_printf);	/* Zhao lei Test. */
 PHP_FUNCTION(xstone_debug);	/* Zhao lei Test. */
+PHP_FUNCTION(xstone_whois);	/* Zhao lei Test. */
 
 
 /* 
