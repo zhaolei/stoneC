@@ -14,12 +14,14 @@
 #include <event.h>
 #include <evhttp.h>
 
-void http_handler(struct evhttp_request *req, void *arg)
+void now_handler(struct evhttp_request *req, void *arg)
 {
         struct evbuffer *buf;
         char ebuf[100];
         struct evkeyvalq params;
         char *decoded_uri;
+        const char *uri;
+
         buf = evbuffer_new();
 
         if (buf == NULL)
@@ -32,6 +34,9 @@ void http_handler(struct evhttp_request *req, void *arg)
         printf("log: %s %s %s \n", req->remote_host, req->host_cache, req->uri);
 
         //GET
+        uri = evhttp_request_uri(req);
+
+        decoded_uri = evhttp_decode_uri(uri);
         evhttp_parse_query(decoded_uri, &params);
         printf("GET: s=%s\n", evhttp_find_header(&params, "s"));
         /*
@@ -42,13 +47,20 @@ void http_handler(struct evhttp_request *req, void *arg)
         */
         free(decoded_uri);
 
-        char *post_data = (char *) EVBUFFER_DATA(req->input_buffer);
-        printf("post_data=%s\n", post_data);
+        //char *post_data = (char *) EVBUFFER_DATA(req->input_buffer);
+        //printf("POST: post_data=%s ok\n", post_data);
         //sprintf(tmp, "post_data=%s\n", post_data);
-        //strcat(output, tmp);
+
+        struct evbuffer *bufx;
+        size_t len;
+        char *data=malloc(1000);
+        bufx=evhttp_request_get_input_buffer(req);
+        len=evbuffer_copyout(bufx, data, 1000);
+        printf("POST: len=%d req=%s\n", (int)len, data);
 }
 
-int http_init(int argc, char **argv)
+
+int mainx(int argc, char **argv)
 {
     struct evhttp *httpd;
 
@@ -58,6 +70,7 @@ int http_init(int argc, char **argv)
 
     if ( httpd == NULL )
     {
+
         fprintf(stderr, "Start server error: %m\n");
         exit(1);
     }
@@ -66,12 +79,15 @@ int http_init(int argc, char **argv)
 
     /* evhttp_set_cb(httpd, "/specific", another_handler, NULL); */
 
+ 
+
     /* Set a callback for all other requests. */
 
-    evhttp_set_gencb(httpd, http_handler, NULL);
+    evhttp_set_gencb(httpd, now_handler, NULL);
     event_dispatch();
 
     /* Not reached in this code as it is now. */
+
     evhttp_free(httpd);
     return 0;
 }
