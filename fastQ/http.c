@@ -14,6 +14,8 @@
 #include <event.h>
 #include <evhttp.h>
 
+int test_g;
+
 void http_handler(struct evhttp_request *req, void *arg)
 {
         struct evbuffer *buf;
