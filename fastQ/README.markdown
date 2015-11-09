@@ -1,4 +1,4 @@
-Source code for 'Mahout in Action' book
+Source code for 'fastQ' 
 ==========
 
 cmd `cmd-<cmd version>` dd.
