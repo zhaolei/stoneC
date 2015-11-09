@@ -1,93 +1,67 @@
-/*
-* {next = {tqe_next = 0x0, tqe_prev = 0x804b624}, evcon = 0x804b598, flags = 1, input_headers = 0x804b578, 
-  output_headers = 0x804b8a8, remote_host = 0x804b958 "127.0.0.1", remote_port = 39867, 
-    host_cache = 0x804bbf0 "localhost", kind = EVHTTP_REQUEST, type = EVHTTP_REQ_GET, headers_size = 402, 
-      body_size = 0, uri = 0x804b428 "/", uri_elems = 0x804b438, major = 1 '\001', minor = 1 '\001', 
-        response_code = 0, response_code_line = 0x0, input_buffer = 0x804b8b8, ntoread = 0, chunked = 0, userdone = 0, 
-          output_buffer = 0x804b908, cb = 0xb7fa57e0, cb_arg = 0x804b3b8, chunk_cb = 0}
-
-*/
-#include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include <err.h>
-#include <event.h>
-#include <evhttp.h>
+#include "dat.h"
+#include "http.h"
+#include "log.h"
 
-void now_handler(struct evhttp_request *req, void *arg)
-{
-        struct evbuffer *buf;
-        char ebuf[100];
-        struct evkeyvalq params;
-        char *decoded_uri;
-        const char *uri;
+char *usages = "Usage: fastq -v\n"
+              "       fastq -h\n"
+              "       fastq [-p/--port] <port> \n"
+	          "       fastq read <id>\n";
 
-        buf = evbuffer_new();
 
-        if (buf == NULL)
-        err(1, "failed to create response buffer");
-
-        sprintf(ebuf, "log: %s %s %s \n", req->remote_host, req->host_cache, req->uri);
-        //evbuffer_add_printf(buf, "<h1>Hello World!</h1>");
-        evbuffer_add_printf(buf, ebuf);
-        evhttp_send_reply(req, HTTP_OK, "OK", buf);
-        printf("log: %s %s %s \n", req->remote_host, req->host_cache, req->uri);
-
-        //GET
-        uri = evhttp_request_uri(req);
-
-        decoded_uri = evhttp_decode_uri(uri);
-        evhttp_parse_query(decoded_uri, &params);
-        printf("GET: s=%s\n", evhttp_find_header(&params, "s"));
-        /*
-        sprintf(tmp, "q=%s\n", evhttp_find_header(&params, "q"));
-        strcat(output, tmp);
-        sprintf(tmp, "s=%s\n", evhttp_find_header(&params, "s"));
-        strcat(output, tmp);
-        */
-        free(decoded_uri);
-
-        //char *post_data = (char *) EVBUFFER_DATA(req->input_buffer);
-        //printf("POST: post_data=%s ok\n", post_data);
-        //sprintf(tmp, "post_data=%s\n", post_data);
-
-        struct evbuffer *bufx;
-        size_t len;
-        char *data=malloc(1000);
-        bufx=evhttp_request_get_input_buffer(req);
-        len=evbuffer_copyout(bufx, data, 1000);
-        printf("POST: len=%d req=%s\n", (int)len, data);
+void usage(void) {
+    fprintf (stderr, "%s\n", usages) ;
+    exit(1);
 }
 
+void version(void) {
+    printf("fastq Ver 1.0\n");
+    printf("Power By Zhaolei \n");
+    exit(1);
+}
 
-int mainx(int argc, char **argv)
-{
-    struct evhttp *httpd;
+int index_fd, dat_fd;    /* Input and output file descriptors */
+int main(int argc, char* argv[]) {
+    /*fd data index init*/
+    initFd(&dat_fd, &index_fd);
+    init_log(argc, argv);
 
-    event_init();
+    error_log("ttt");
 
-    httpd = evhttp_start("0.0.0.0", 6006);
-
-    if ( httpd == NULL )
-    {
-
-        fprintf(stderr, "Start server error: %m\n");
-        exit(1);
+    if (argc == 1) {
+        fprintf (stderr, "%s\n", usages) ;
+        return 1 ;
     }
 
-    /* Set a callback for requests to "/specific". */
+    if (argc >= 2) {
+        /* Handle special options --help and --version */
+        if (strcmp(argv[1], "-v") == 0 ||
+            strcmp(argv[1], "--version") == 0) version();
+        if (strcmp(argv[1], "--help") == 0 ||
+            strcmp(argv[1], "-h") == 0) usage();
 
-    /* evhttp_set_cb(httpd, "/specific", another_handler, NULL); */
+        if (strcmp(argv[1], "--port") == 0 ||
+            strcmp(argv[1], "-p") == 0) http_init(argc, argv);
 
- 
+        if (strcmp(argv[1], "read") == 0) {
+            int id = 35000;
+            char *data;
+            data = readEntity(dat_fd, index_fd, id); 
+            printf("dat:%s", data);
+            return 1;
+        }
+        
+    }
 
-    /* Set a callback for all other requests. */
+    //http server init
+    http_init();
 
-    evhttp_set_gencb(httpd, now_handler, NULL);
-    event_dispatch();
+    /*
+    int id = 35000;
+    char *data;
+    data = readEntity(dat_fd, index_fd, id); 
+    printf("dat:%s", data);
+    */
 
-    /* Not reached in this code as it is now. */
-
-    evhttp_free(httpd);
     return 0;
 }
