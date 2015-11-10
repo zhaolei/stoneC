@@ -5,8 +5,9 @@ cmd `cmd-<cmd version>` dd.
 
 # Installation #
 
-* `xx` test;
-* `fafe` def;
+* `cmake .` configure;
+* `make` make;
+* `make install` make install;
 
 # Examples for  #
 
