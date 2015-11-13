@@ -1,52 +1,58 @@
 #include <curl/curl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/types.h>
 
-CURL *curl;
-CURLcode res;
+#include "log.h"
+#include "post.h"
 
-size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
-{
-    if (strlen((char *)stream) + strlen((char *)ptr) > 999999) return 0;
-    strcat(stream, (char *)ptr);
-    return size*nmemb;
+//CURLcode code;
+//CURL *curl
+
+int post_init() {
+    curl = curl_easy_init();//对curl进行初始化
 }
 
-char *down_file(char *filename)
-{
-    static char str[10000000];
-    strcpy(str, "");
-    //return “”;
+int post_url(char *filename, char *data) {
 
-curl_easy_setopt(curl, CURLOPT_URL, filename); //设置下载地址
+    curl_easy_setopt(curl, CURLOPT_URL, filename); //设置下载地址
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);//设置超时时间
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, push_log);//设置写数据的函数
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, plog_fd);//设置写数据的变量
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    res = curl_easy_perform(curl);//执行下载
 
-curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);//设置超时时间
+    printf("ok over\n");
+    //return 1;
+    //return res;
+    if(CURLE_OK != res) {
+        return 0;//判断是否下载成功
+    }
 
-curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);//设置写数据的函数
-
-curl_easy_setopt(curl, CURLOPT_WRITEDATA, str);//设置写数据的变量
-
-res = curl_easy_perform(curl);//执行下载
-
-str[9999999] = '\0';
-if(CURLE_OK != res) return NULL;//判断是否下载成功
-
-return str;
+    return 1;
 }
-int main()
+int ppmain()
 {
     char url[200];
+    int r;
+    char *tourl = "http://127.0.0.1/fastq.php";
     curl = curl_easy_init();//对curl进行初始化
-    strcpy(url, "http://www.baidu.com/");
+    //strcpy(url, "http://www.baidu.com/");
 
+    //int id = get_argv_id(argc, argv);
+    //char *data;
+    //data = readEntity(dat_fd, index_fd, id); 
+    //printf("dat:%s", data);
+
+    init_push_log();
+    //plog_fd = open("log/post.log", O_RDWR | O_CREAT | O_APPEND , 0644);
     char *result;
-    //while(fgets(url, 200, stdin)){
-        result = down_file(url);
-        if (result) puts(result);
-        else puts("Get Error!");
-        printf("\nPlease Input a url:");
+    post_url(tourl, "fffee");
 
-    //}
     curl_easy_cleanup(curl);//释放curl资源
     return 0;
 }

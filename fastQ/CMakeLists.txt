@@ -3,7 +3,7 @@ PROJECT(fastq)                                             #定义整个CMake的
 FILE(GLOB SOURCE_Q "log.c dat.c http.c fastq.c")                      #告诉CMake：工程的源文件在哪里？
 ADD_EXECUTABLE(fastq log.c dat.c http.c fastq.c)  
 FILE(GLOB SOURCE_P "log.c dat.c http.c fastp.c")                      #告诉CMake：工程的源文件在哪里？
-ADD_EXECUTABLE(fastp log.c dat.c http.c fastp.c)  
+ADD_EXECUTABLE(fastp log.c dat.c http.c fastp.c post.c)  
 #TARGET_LINK_LIBRARIES("-levent")
 #TARGET_LINK_LIBRARIES("-L/usr/local/lib")
 set(CMAKE_C_FLAGS " -g -Wall ")

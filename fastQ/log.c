@@ -11,13 +11,27 @@
 
 #include "log.h"
 
-
 int init_log(int argc, char **argv) {
     log_fd = open("log/access.log", O_RDWR | O_CREAT | O_APPEND , 0644);
     lseek(log_fd, 0, SEEK_END);
     err_fd = open("log/err.log", O_RDWR | O_CREAT | O_APPEND , 0644);
     lseek(err_fd, 0, SEEK_END);
+
+    return 0;
 }
+
+int init_push_log() {
+    plog_fd = open("log/post.log", O_RDWR | O_CREAT | O_APPEND , 0644);
+    lseek(err_fd, 0, SEEK_END);
+    return 0;
+}
+
+size_t push_log(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+    write(plog_fd, ptr, size*nmemb);
+    return size*nmemb;
+}
+
 
 void access_log(struct evhttp_request *req) {
     char buf[LOG_SIZE];
