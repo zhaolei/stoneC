@@ -2,6 +2,7 @@
 
 int log_fd;
 int err_fd;
+int plog_fd;
 
 #define LOG_SIZE 200
 
@@ -14,3 +15,5 @@ void err_log(char *str);
 void log_format();
 
 void format_time(char *str);
+
+size_t push_log(void *ptr, size_t size, size_t nmemb, void *stream);
