@@ -64,15 +64,19 @@ char *readEntity(int dfd, int ifd, int id) {
     return data;
 }
 
+void freeEntity(void *data) {
+    free(data);
+}
+
 /*
  * dfd data file ,ifd index file   
  */
 int initFd(int *dfd, int *ifd) {
 
     //data open
-    *dfd = open("data/dat", O_RDWR | O_CREAT | O_APPEND , 0644);
+    *dfd = open("data/fastq.dat", O_RDWR | O_CREAT | O_APPEND , 0644);
     //index file open 
-    *ifd = open("data/ind", O_RDWR | O_CREAT | O_APPEND , 0644);
+    *ifd = open("data/fastq.idx", O_RDWR | O_CREAT | O_APPEND , 0644);
 
     return 2;
 } 

@@ -1,25 +1,15 @@
 Source code for 'fastQ' 
 ==========
 
-cmd `cmd-<cmd version>` dd.
-
 # Installation #
 
 * `cmake .` configure;
 * `make` make;
-* `make install` make install;
 
-# Examples for  #
+# Examples for start  #
 
-* copy `xst` and `fft` ffy;
+* `fastq -p 8801` fastQ will run in port 8801 ;
+* `curl -d "fastq data {data}" http://127.0.0.1:8801/put` post data to fastQ
+* `fastp read 1` Read data from fastQ , from id=1 
 
-## Start the server with no model yet ##
-
-In t the server
-
-    java -cp target/wwjar  stsfa
-
-or
-
-    mvn exec:java -Dexec.mainClass="fef.svsfe.f"
 

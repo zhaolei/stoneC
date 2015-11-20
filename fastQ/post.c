@@ -27,8 +27,6 @@ int post_url(char *filename, char *data) {
     res = curl_easy_perform(curl);//执行下载
 
     printf("ok over\n");
-    //return 1;
-    //return res;
     if(CURLE_OK != res) {
         return 0;//判断是否下载成功
     }

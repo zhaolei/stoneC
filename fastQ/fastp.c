@@ -3,6 +3,7 @@
 #include "http.h"
 #include "log.h"
 #include "post.h"
+#include "conf.h"
 
 char *usages = "Usage: fastp -v\n"
               "       fastp -h\n"
@@ -39,7 +40,8 @@ int main(int argc, char* argv[]) {
 
     //error_log("test");
     post_init();
-    char *tourl = "http://127.0.0.1/fastq.php";
+    //char *tourl = "http://127.0.0.1/fastq.php";
+    char *tourl = readConfUrl(); 
 
     if (argc >= 2) {
         /* Handle special options --help and --version */
@@ -60,6 +62,7 @@ int main(int argc, char* argv[]) {
         
     }
 
+    free(tourl);
     curl_easy_cleanup(curl);//释放curl资源
 
     return 0;
