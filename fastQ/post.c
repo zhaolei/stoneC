@@ -33,8 +33,7 @@ int post_url(char *filename, char *data) {
 
     return 1;
 }
-int ppmain()
-{
+int ppmain(){
     char url[200];
     int r;
     char *tourl = "http://127.0.0.1/fastq.php";

@@ -5,30 +5,50 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "dat.h" 
+#include "log.h"
 
 int writeData(int fd, void *data, int len) {
     int cur; 
+    int ret;
 
     cur = lseek(fd, 0, SEEK_END);
-    write (fd, data, len);
+    ret = write (fd, data, len);
+    if(ret == -1) {
+        error_log("write data  error");        
+    }
     return cur;
 } 
 
 int readData(int fd, void *data, int pos, int len) {
     int cur; 
+    int ret;
     cur = lseek(fd, pos, SEEK_SET);
-    read(fd, data, len);
+    ret = read(fd, data, len);
+    if(ret == -1) {
+        error_log("read data  error");        
+    }
     return cur;
 } 
 
 int writeIndex(int fd, void *data) {
-    lseek(fd, 0, SEEK_END);
-    write (fd, data, INDEX_SIZE);
-    return lseek(fd, 0, SEEK_CUR);
+    int ret;
+    int cur;
+    cur = lseek(fd, 0, SEEK_END);
+    ret = write (fd, data, INDEX_SIZE);
+    if(ret == -1) {
+        error_log("write Index error");        
+    }
+    return cur;
 } 
 
 int readIndex(int fd, void *data) {
-    return read(fd, data, INDEX_SIZE);
+    int ret;
+    ret = read(fd, data, INDEX_SIZE);
+    if(ret == -1) {
+        error_log("read Index error");        
+    }
+
+    return ret;
 } 
 
 int readIndexById(int fd, void *data, int id) {

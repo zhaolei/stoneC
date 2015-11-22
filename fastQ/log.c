@@ -26,8 +26,7 @@ int init_push_log() {
     return 0;
 }
 
-size_t push_log(void *ptr, size_t size, size_t nmemb, void *stream)
-{
+size_t push_log(void *ptr, size_t size, size_t nmemb, void *stream) {
     write(plog_fd, ptr, size*nmemb);
     return size*nmemb;
 }
@@ -54,7 +53,7 @@ void access_log(struct evhttp_request *req) {
     //printf("Content-Length: s=%s\n", evhttp_find_header(header, "Content-Length"));
 
     memset(buf, 0, LOG_SIZE);
-    len = sprintf(buf, "[%s]  \n", ftime);
+    len = sprintf(buf, "[%s][%s][%s]  \n", req->remote_host, ftime, req->uri);
     write(log_fd, buf, len);
 
     free(decoded_uri);
