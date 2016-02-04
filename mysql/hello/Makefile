@@ -1,4 +1,4 @@
 r:main.c
-	gcc -o r -g main.c `/stone/local/mysql/bin/mysql_config --libs_r` `/stone/local/mysql/bin/mysql_config --include`
+	gcc -o r -g main.c `mysql_config --libs_r` `mysql_config --include`
 m:m.c
-	gcc -o m -g m.c `/stone/local/mysql/bin/mysql_config --libs_r` `/stone/local/mysql/bin/mysql_config --include`
+	gcc -o m -g m.c `mysql_config --libs_r` `mysql_config --include`

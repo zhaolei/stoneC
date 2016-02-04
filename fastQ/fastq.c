@@ -65,8 +65,8 @@ int main(int argc, char* argv[]) {
         if (strcmp(argv[1], "--port") == 0 ||
             strcmp(argv[1], "-p") == 0) {
 
-            http_init(argc, argv);
             daemonize();
+            http_init(argc, argv);
 
         } 
 
